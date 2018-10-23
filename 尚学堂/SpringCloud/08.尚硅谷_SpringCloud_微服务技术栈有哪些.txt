@@ -1,0 +1,18 @@
+微服务技术栈：	多种技术的集合体
+
+微服务条目					落地技术
+服务开发					SpringBoot, Spring, SpringMVC
+服务配置与管理				Netflix公司的Archaius, 阿里的Diamond等
+服务注册与发现				Eureka, Consul, Zookeeper
+服务调用					Rest, RPC gRPC(谷歌)
+服务熔断器					Hystrix, Envoy
+负载均衡					Ribbon, Nginx
+服务接口调用				Feign
+消息队列					Kafka, RabbitMQ, ActiveNQ
+服务配置中心管理			SpringCloudConfig, Chef
+服务路由(API网关)			Zuul
+服务监控					Zabbix, Nagios, Metrics, Spectator
+全链路追踪					Zipkin, Brave, Dapper
+服务部署					Docker, OpenStack, Kubernetes
+数据流操作开发包			SpringCloud Stream
+事件消息总线				Spring Cloud Bus
