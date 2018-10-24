@@ -1,0 +1,312 @@
+
+1.	新建microservicecloud-provider-dept-8001
+
+2.	POM.xml
+	<?xml version="1.0" encoding="UTF-8"?>
+
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	  <modelVersion>4.0.0</modelVersion>
+
+	  <parent>
+		<artifactId>microservicecloud</artifactId>
+		<groupId>com.atguigu.springcloud</groupId>
+		<version>1.0-SNAPSHOT</version>
+	  </parent>
+
+	  <artifactId>microservicecloud-provider-dept-8001</artifactId>
+
+
+	  <dependencies>
+		<!-- 引入自己定义的api通用包，可以使用Dept部门Entity -->
+		<dependency>
+		  <groupId>com.atguigu.springcloud</groupId>
+		  <artifactId>microservicecloud-api</artifactId>
+		  <version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- actuator监控信息完善 -->
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- 将微服务provider侧注册进eureka -->
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>junit</groupId>
+		  <artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>mysql</groupId>
+		  <artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>com.alibaba</groupId>
+		  <artifactId>druid</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>ch.qos.logback</groupId>
+		  <artifactId>logback-core</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.mybatis.spring.boot</groupId>
+		  <artifactId>mybatis-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<!-- 修改后立即生效，热部署 -->
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>springloaded</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+	  </dependencies>
+	</project>
+	
+3.	application.yml
+	server:
+	  port: 8001
+
+	mybatis:
+	  config-location: classpath:mybatis/mybatis.cfg.xml        # mybatis配置文件所在路径
+	  type-aliases-package: com.atguigu.springcloud.entities    # 所有Entity别名类所在包
+	  mapper-locations:
+	  - classpath:mybatis/mapper/**/*.xml                       # mapper映射文件
+
+	spring:
+	  application:
+		name: microservicecloud-dept
+	  datasource:
+		type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+		driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包
+		url: jdbc:mysql://localhost:3306/cloudDB01              # 数据库名称
+		username: root
+		password: root
+		dbcp2:
+		  min-idle: 5                                           # 数据库连接池的最小维持连接数
+		  initial-size: 5                                       # 初始化连接数
+		  max-total: 5                                          # 最大连接数
+		  max-wait-millis: 200                                  # 等待连接获取的最大超时时间
+
+4.	工程src/main/resources目录下新建mybatis文件夹后新建mybatis.cfg.xml文件(此文件可以没有)
+	<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE configuration
+	  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+	<configuration>
+		<settings>
+			<setting name="cacheEnabled" value="true" /><!-- 二级缓存开启 -->
+		</settings>
+	</configuration>
+	
+5.	MySQL创建部门数据库脚本
+	CREATE TABLE `dept` (
+	  `deptno` bigint(20) NOT NULL AUTO_INCREMENT,
+	  `dname` varchar(60) DEFAULT NULL,
+	  `db_source` varchar(255) DEFAULT NULL,
+	  PRIMARY KEY (`deptno`)
+	) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+
+	INSERT into dept (dname, db_source) VALUES('开发部', DATABASE());
+	INSERT into dept (dname, db_source) VALUES('人事部', DATABASE());
+	INSERT into dept (dname, db_source) VALUES('财务部', DATABASE());
+	INSERT into dept (dname, db_source) VALUES('市场部', DATABASE());
+	INSERT into dept (dname, db_source) VALUES('运维部', DATABASE());
+	
+6.	DeptDao部门接口
+	package com.atguigu.springcloud.dao;
+
+	import java.util.List;
+	import org.apache.ibatis.annotations.Mapper;
+	import com.atguigu.springcloud.entities.Dept;
+
+	@Mapper
+	public interface DeptDao {
+		public boolean addDept(Dept dept);
+
+		public Dept findById(Long id);
+
+		public List<Dept> findAll();
+	}
+
+7.	工程src/main/resources/mybatis目录下新建mapper文件夹后再建DeptMapper.xml
+	<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.atguigu.springcloud.dao.DeptDao">
+		<select id="findById" resultType="Dept" parameterType="Long">
+			select deptno,dname,db_source from dept where deptno=#{deptno};
+		</select>
+		<select id="findAll" resultType="Dept">
+			select deptno,dname,db_source from dept;
+		</select>
+		<insert id="addDept" parameterType="Dept">
+			INSERT INTO dept(dname,db_source) VALUES(#{dname},DATABASE());
+		</insert>
+	</mapper>
+	
+8.	DeptService部门服务接口
+	package com.atguigu.springcloud.service;
+
+	import java.util.List;
+	import com.atguigu.springcloud.entities.Dept;
+
+	public interface DeptService {
+		public boolean add(Dept dept);
+
+		public Dept get(Long id);
+
+		public List<Dept> list();
+	}
+	
+9.	DeptServiceImpl部门服务接口实现类
+	package com.atguigu.springcloud.service.impl;
+
+	import java.util.List;
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.stereotype.Service;
+	import com.atguigu.springcloud.dao.DeptDao;
+	import com.atguigu.springcloud.entities.Dept;
+	import com.atguigu.springcloud.service.DeptService;
+
+	@Service
+	public class DeptServiceImpl implements DeptService {
+		@Autowired
+		private DeptDao dao;
+
+		@Override
+		public boolean add(Dept dept)
+		{
+			return dao.addDept(dept);
+		}
+
+		@Override
+		public Dept get(Long id)
+		{
+			return dao.findById(id);
+		}
+
+		@Override
+		public List<Dept> list()
+		{
+			return dao.findAll();
+		}
+	}
+	
+10.	DeptController部门微服务提供者REST
+	package com.atguigu.springcloud.controller;
+
+	import java.util.List;
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.cloud.client.discovery.DiscoveryClient;
+	import org.springframework.web.bind.annotation.PathVariable;
+	import org.springframework.web.bind.annotation.RequestBody;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.bind.annotation.RequestMethod;
+	import org.springframework.web.bind.annotation.RestController;
+	import com.atguigu.springcloud.entities.Dept;
+	import com.atguigu.springcloud.service.DeptService;
+
+	@RestController
+	public class DeptController {
+		@Autowired
+		private DeptService service;
+		@Autowired
+		private DiscoveryClient client;
+
+		@RequestMapping(value = "/dept/add", method = RequestMethod.POST)
+		public boolean add(@RequestBody Dept dept)
+		{
+			return service.add(dept);
+		}
+
+		@RequestMapping(value = "/dept/get/{id}", method = RequestMethod.GET)
+		public Dept get(@PathVariable("id") Long id)
+		{
+			return service.get(id);
+		}
+
+		@RequestMapping(value = "/dept/list", method = RequestMethod.GET)
+		public List<Dept> list()
+		{
+			return service.list();
+		}
+	}
+
+11.	DeptProvider8001_App主启动类DeptProvider8001_App
+	package com.atguigu.springcloud;
+
+	import org.springframework.boot.SpringApplication;
+	import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
+	@SpringBootApplication
+	public class App {
+		public static void main( String[] args ) {
+			SpringApplication.run(App.class, args);
+		}
+	}
+
+12.	测试
+	http://localhost:8001/dept/get/2
+	http://localhost:8001/dept/list
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
