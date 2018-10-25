@@ -1,0 +1,69 @@
+
+1.	新建microservicecloud-eureka-7001
+
+2.	pom.xml
+	<?xml version="1.0" encoding="UTF-8"?>
+	<project xmlns="http://maven.apache.org/POM/4.0.0"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		<parent>
+			<artifactId>microservicecloud</artifactId>
+			<groupId>com.atguigu.springcloud</groupId>
+			<version>1.0-SNAPSHOT</version>
+		</parent>
+		<modelVersion>4.0.0</modelVersion>
+
+		<artifactId>microservicecloud-eureka-7001</artifactId>
+
+		<dependencies>
+			<!--eureka-server服务端 -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-eureka-server</artifactId>
+			</dependency>
+			<!-- 修改后立即生效，热部署 -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>springloaded</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-devtools</artifactId>
+			</dependency>
+		</dependencies>
+	</project>
+	
+3.	application.yml
+	server: 
+	  port: 7001
+	 
+	eureka: 
+	  instance:
+		hostname: eureka7001.com #eureka服务端的实例名称
+	  client: 
+		register-with-eureka: false     #false表示不向注册中心注册自己。
+		fetch-registry: false     #false表示自己端就是注册中心，我的职责就是维护服务实例，并不需要去检索服务
+		service-url: 
+		  单机 defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/       #设置与Eureka Server交互的地址查询服务和注册服务都需要依赖这个地址（单机）。
+		  
+4.	package com.atguigu.springcloud;
+
+	import org.springframework.boot.SpringApplication;
+	import org.springframework.boot.autoconfigure.SpringBootApplication;
+	import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+	@SpringBootApplication
+	@EnableEurekaServer // EurekaServer服务器端启动类,接受其它微服务注册进来
+	public class EurekaServer7001_App {
+		public static void main(String[] args) {
+			SpringApplication.run(EurekaServer7001_App.class, args);
+		}
+	}
+
+5.	测试
+	http://localhost:7001/
+		  
+		
+ 
+
+ 
