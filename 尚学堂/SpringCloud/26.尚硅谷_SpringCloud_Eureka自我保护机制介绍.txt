@@ -1,0 +1,13 @@
+
+	好死不如赖活着
+	一句话：某时刻某一个微服务不可用了，eureka不会立刻清理，依旧会对该微服务的信息进行保存
+	
+	eureka:
+	  client:
+		service-url:
+		  defaultZone: http://localhost:7001/eureka
+	  instance:
+		instance-id: microservicecloud-dept-8001               # 修改status的名称
+		prefer-ip-address: true                               # 显示具体的ip
+	  server:
+		enable-self-preservation: false                     # 禁用自我保护 不建议
