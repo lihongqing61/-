@@ -1,0 +1,11 @@
+
+	23.尚硅谷_SpringCloud_微服务完善_主机映射名称修改
+1.	修改microservicecloud-provider-dept-8001
+
+2.	application.yml
+	eureka:
+	  client:
+		service-url:
+		  defaultZone: http://localhost:7001/eureka
+	  instance:
+		instance-id: microservicecloud-dept-8001               # 修改status的名称

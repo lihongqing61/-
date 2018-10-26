@@ -1,0 +1,177 @@
+
+	22.尚硅谷_SpringCloud_将已有的部门微服务注册进Eureka服务中心
+1.	修改microservicecloud-provider-dept-8001
+
+2.	pom.xml
+	<?xml version="1.0" encoding="UTF-8"?>
+
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	  <modelVersion>4.0.0</modelVersion>
+
+	  <parent>
+		<artifactId>microservicecloud</artifactId>
+		<groupId>com.atguigu.springcloud</groupId>
+		<version>1.0-SNAPSHOT</version>
+	  </parent>
+
+	  <artifactId>microservicecloud-provider-dept-8001</artifactId>
+
+
+	  <dependencies>
+		<!-- 引入自己定义的api通用包，可以使用Dept部门Entity -->
+		<dependency>
+		  <groupId>com.atguigu.springcloud</groupId>
+		  <artifactId>microservicecloud-api</artifactId>
+		  <version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- actuator监控信息完善 -->
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- 将微服务provider侧注册进eureka -->
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>junit</groupId>
+		  <artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>mysql</groupId>
+		  <artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>com.alibaba</groupId>
+		  <artifactId>druid</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>ch.qos.logback</groupId>
+		  <artifactId>logback-core</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.mybatis.spring.boot</groupId>
+		  <artifactId>mybatis-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<!-- 修改后立即生效，热部署 -->
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>springloaded</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+
+		<!-- 将微服务provider侧注册进eureka -->
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+	  </dependencies>
+	</project>
+	
+3.	application.yml
+	server:
+	  port: 8001
+
+	mybatis:
+	  config-location: classpath:mybatis/mybatis.cfg.xml        # mybatis配置文件所在路径
+	  type-aliases-package: com.atguigu.springcloud.entities    # 所有Entity别名类所在包
+	  mapper-locations:
+	  - classpath:mybatis/mapper/**/*.xml                       # mapper映射文件
+
+	spring:
+	  application:
+		name: microservicecloud-provider-dept-8001
+	  datasource:
+		type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+		driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包
+		url: jdbc:mysql://localhost:3306/cloudDB01              # 数据库名称
+		username: root
+		password: root
+		dbcp2:
+		  min-idle: 5                                           # 数据库连接池的最小维持连接数
+		  initial-size: 5                                       # 初始化连接数
+		  max-total: 5                                          # 最大连接数
+		  max-wait-millis: 200                                  # 等待连接获取的最大超时时间
+
+	eureka:
+	  client:
+		service-url:
+		  defaultZone: http://localhost:7001/eureka
+		  
+4.	DeptProvider8001_App主启动类
+	package com.atguigu.springcloud;
+
+	import org.springframework.boot.SpringApplication;
+	import org.springframework.boot.autoconfigure.SpringBootApplication;
+	import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
+
+	@SpringBootApplication
+	@EnableEurekaClient
+	public class DeptProvider8001_App {
+
+		public static void main(String[] args) {
+			SpringApplication.run(DeptProvider8001_App.class, args);
+		}
+	}
+
+5.	测试
+	先要启动EurekaServer
+	http://localhost:7001/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
